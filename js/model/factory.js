@@ -99,7 +99,7 @@ function abstractFactory() {
     abstractFactory.abstractWallFactory.prototype = {
         createHorizontalWall: function(coords) { //создать горизонтальную стену...
             return abstractFactory.createObj(coords, [{//... с вот такими размерами
-                x: 0.2,
+                x: 0.4,
                 y: 4,
                 z: 4
             }]);
@@ -110,7 +110,7 @@ function abstractFactory() {
             return abstractFactory.createObj(coords, [{
                 x: 5,
                 y: 4,
-                z:0.2
+                z:0.4
             }]);
         }
     };
@@ -122,15 +122,15 @@ function abstractFactory() {
             return abstractFactory.createObj(coords, [{//состоит из трех прямоугольников
                 x: 1.5,
                 y: 4,
-                z: 0.2
+                z: 0.4
             }, {
                 x: 2,
                 y: 1,
-                z: 0.2
+                z: 0.4
             }, {
                 x: 1.5,
                 y: 4,
-                z: 0.2
+                z: 0.4
             }], [{
                     x: 1.5,
                     y: 4,
@@ -152,15 +152,15 @@ function abstractFactory() {
         createHorizontalDoor: function(coords) { //... горизонтальную дверь
 
             return abstractFactory.createObj(coords, [{
-                x: 0.2,
+                x: 0.4,
                 y: 4,
                 z: 1
             }, {
-                x: 0.2,
+                x: 0.4,
                 y: 1,
                 z: 2
             }, {
-                x: 0.2,
+                x: 0.4,
                 y: 4,
                 z: 1
             }],

@@ -159,7 +159,7 @@ var isShot = false; //для кулдауна выстрела
  })();
 
  setInterval(keyboardControls, 25)
-setInterval(moveBullets, 25)
+setInterval(moveBullets, 0)
 
 //создать пулю
 function shot(){
@@ -184,8 +184,8 @@ function moveBullets(){
 function bulletMove(obj){
     var bullets = model.bullets;
     var gazer = model.gazer;
-    obj.position.z -= 0.5 * Math.cos(obj.rotation.y);
-    obj.position.x -= 0.5 * Math.sin(obj.rotation.y);
+    obj.position.z -= 0.1 * Math.cos(obj.rotation.y);
+    obj.position.x -= 0.1 * Math.sin(obj.rotation.y);
     var hit = isHit(obj);
     if (hit[0]) {
         if (hit[1].name != gazer.id){
@@ -224,16 +224,15 @@ function bulletMove(obj){
 
              while (true) {
                  if (intersects === undefined) break;
-                if (intersects[0].object.class == 'bullet') {
+                 if (intersects[0].object.class == 'bullet') {
                     intersects.splice(0, 1);
                     if (intersects.length ==0 ) break;
-
-                } else {
-                    break;
-                }
+                 } else {
+                     break;
+                 }
              }
 
-             if ( intersects[0] !== undefined ) {
+             if (intersects[0] !== undefined ) {
                  lengths.push(intersects[0].distance);
                  objs.push(intersects[0].object);
              } else {
@@ -241,13 +240,15 @@ function bulletMove(obj){
                  objs.push(null);
              }
          }
-     };
 
+     };
      //если расстояния до пересечения меньше размеров объекта, то объект врезался во что-то
+     if (lengths.length == 0) return [false, null];
      if (lengths[0] < obj.size.z/2) return [true, objs[0]];
      if (lengths[1] < obj.size.z/2) return  [true, objs[1]];
      if (lengths[2] < obj.size.x/2) return  [true, objs[2]];
      if (lengths[3] < obj.size.x/2) return  [true, objs[3]];
+
 
      return [false, null];
 
