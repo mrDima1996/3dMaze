@@ -65,6 +65,33 @@ function abstractFactory() {
             }
 
             return newWall;
+        },
+
+        //создает пулю
+        createBullet: function(gazer) {
+            var newBullet = {};
+            newBullet.position = {
+                x: gazer.position.x,
+                y: gazer.position.y,
+                z: gazer.position.z
+            };
+
+            newBullet.angle = {
+                x: gazer.angle.x,
+                y: gazer.angle.y,
+                z: gazer.angle.z
+            };
+
+            newBullet.size = {
+                x: 0.1,
+                y: 0.1,
+                z: 0.1
+            };
+
+            newBullet.id = gazer.id;
+
+            return newBullet;
+
         }
 
     };

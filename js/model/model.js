@@ -17,14 +17,15 @@ function modelClass() {
        |  .. .X. |&\
        |__.._._._|  ';
     
-
-
+    //получаем список игроков и список пуль
+    this.players = [];
+    this.bullets = [];
 
     /**
      *координаты игрока. Пока нулевые.
      */
     this.gazer = {
-        coords: {
+        position: {
              x: 0,
              y: 0,
              z: 0
@@ -38,7 +39,8 @@ function modelClass() {
              x: 0,
              y: 0,
              z: 0
-        }
+        },
+        id: '1'
     };
     //текущие координаты обхода.
     this._coordsPointer = {
@@ -62,7 +64,7 @@ modelClass.prototype = {
     },
 
     setGazerCoords: function(coords) {//сеттер координат игрока
-         this.gazer.coords = coords;
+         this.gazer.position = coords;
 
     },
 
@@ -84,7 +86,7 @@ modelClass.prototype = {
 
         this.objCollection.push(floor);
 
-        view.setCameraPosition(this.gazer.coords);
+        view.setCameraPosition(this.gazer.position);
     },
 
     /**
@@ -101,9 +103,9 @@ modelClass.prototype = {
 
             case 'X':
                 /**место игрока*/
-                this.gazer.coords.x = this._coordsPointer.x;
-                this.gazer.coords.y = this._coordsPointer.y+2;
-                this.gazer.coords.z = this._coordsPointer.z;
+                this.gazer.position.x = this._coordsPointer.x;
+                this.gazer.position.y = this._coordsPointer.y+2;
+                this.gazer.position.z = this._coordsPointer.z;
                 this._coordsPointer.z -= 4;
                 break;
 

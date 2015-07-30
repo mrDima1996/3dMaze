@@ -1,8 +1,8 @@
 (function() {
         function init() {
             /** через 10 милисекунд добавляем ядро программы, чтобы все скрипты успели прогрузится*/
-            setTimeout(importJS('js/view.js'), 5);
-            setTimeout(importJS('js/core.js'), 10);
+            setTimeout(importJS('js/core.js'), 5);
+            setTimeout(importJS('js/viewmodel/viewmodel.js'), 10);
 
             function importJS(src) {
                 var scriptElem = document.createElement('script');

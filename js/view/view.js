@@ -15,7 +15,9 @@ function abstractView() {
     this._texture.wrapS = this._texture.wrapT = THREE.ClampToEdgeWrapping; //настройки текстуры, которые, к слову, нихрена не работают
     this._texture.repeat.set(1, 1);//тоже настройки текстуры
     this._texture.minFilter = THREE.NearestFilter;
-    this._material = new THREE.MeshLambertMaterial({map: this._texture}); //задаем материал, из которого будут создаваться нарисованные обекты
+    //задаем материал, из которого будут создаваться нарисованные обекты
+    this._material = new THREE.MeshLambertMaterial({map: this._texture});
+    this._bulletMaterial = new THREE.MeshNormalMaterial();
    //функция отвечающая за анимацию.
     this.render = function() {
         var self = this;
@@ -68,12 +70,33 @@ abstractView.prototype = {
 
         var geometry = new THREE.BoxGeometry(size.x, size.y, size.z);
         
-        cube = new THREE.Mesh(geometry, this._material);
+        var cube = new THREE.Mesh(geometry, this._material);
+        cube.size = size;
+        cube.class = 'wall';
+        cube.name = 'wall';
         cube.position.x = position.x;
         cube.position.y = position.y;
         cube.position.z = position.z;
         this._scene.add(cube);
+    },
+    createBullet: function(size, position, rotation, id) {
 
+
+        var geometry = new THREE.BoxGeometry(size.x, size.y, size.z);
+
+        var cube = new THREE.Mesh(geometry, this._bulletMaterial);
+        cube.class = 'bullet';
+        cube.name = id;
+        cube.size = size;
+        cube.position.x = position.x;
+        cube.position.y = position.y;
+        cube.position.z = position.z;
+
+        cube.rotation.x = rotation.x;
+        cube.rotation.y = rotation.y;
+        cube.rotation.z = rotation.z;
+        this._scene.add(cube);
+        return cube;
 
     },
 

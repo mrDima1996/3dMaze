@@ -1,6 +1,7 @@
 /*
 Обрабатывает действия пользователя и отправляет в view
  */
+
 //работает только под мозилу
  var onMouseMove = function(event) {
       var gazer = model.getGazer(); //получение информации об игроке
@@ -16,7 +17,7 @@
 
  };
  document.addEventListener('mousemove', onMouseMove, false);
-
+var isShot = false; //для кулдауна выстрела
 
 
 //функция позволяющая обрабатывать одновременное нажатие нескольких клавищ, указанных в объекте ниже
@@ -63,35 +64,36 @@
          keys.SP, keys.W, keys.A, keys.S, keys.D, keys.UP, keys.LT, keys.DN, keys.RT
      ]);
      return function() {
+
          //собственно, реакция на нажатую кнопку
 
          //получение информации об игроке
          var gazer = model.getGazer();
          var cameraData = copy(gazer); 
-         var vX = cameraData.coords.x;
-         var vY = cameraData.coords.y;
-         var vZ = cameraData.coords.z;
+         var vX = cameraData.position.x;
+         var vY = cameraData.position.y;
+         var vZ = cameraData.position.z;
        
 
          if (keysPressed[87]) { //вперед
-             cameraData.coords.z -= 0.1 * Math.cos(cameraData.angle.y);
-             cameraData.coords.x -= 0.1 * Math.sin(cameraData.angle.y);
+             cameraData.position.z -= 0.2 * Math.cos(cameraData.angle.y);
+             cameraData.position.x -= 0.2 * Math.sin(cameraData.angle.y);
 
          }
 
          if (keysPressed[83]) { //назад
-             cameraData.coords.z += 0.1 * Math.cos(cameraData.angle.y);
-             cameraData.coords.x += 0.1 * Math.sin(cameraData.angle.y);
+             cameraData.position.z += 0.2 * Math.cos(cameraData.angle.y);
+             cameraData.position.x += 0.2 * Math.sin(cameraData.angle.y);
          }
 
          if (keysPressed[65]) { //влево
-             cameraData.coords.z -= 0.1 * Math.cos(cameraData.angle.y + Math.PI / 2);
-             cameraData.coords.x -= 0.1 * Math.sin(cameraData.angle.y + Math.PI / 2);
+             cameraData.position.z -= 0.2 * Math.cos(cameraData.angle.y + Math.PI / 2);
+             cameraData.position.x -= 0.2 * Math.sin(cameraData.angle.y + Math.PI / 2);
          }
 
          if (keysPressed[68]) { //вправо
-             cameraData.coords.z += 0.1 * Math.cos(cameraData.angle.y + Math.PI / 2);
-             cameraData.coords.x += 0.1 * Math.sin(cameraData.angle.y + Math.PI / 2);
+             cameraData.position.z += 0.2 * Math.cos(cameraData.angle.y + Math.PI / 2);
+             cameraData.position.x += 0.2 * Math.sin(cameraData.angle.y + Math.PI / 2);
          }
 
          if (keysPressed[38]) { //камеру вверх
@@ -102,11 +104,19 @@
              cameraData.angle.x += 0;
          }
          if (keysPressed[37]) { //камеру влево
-             cameraData.angle.y += 0.05;
+             cameraData.angle.y += 0.1;
          }
 
          if (keysPressed[39]) { //камеру вправо
-             cameraData.angle.y -= 0.05;
+             cameraData.angle.y -= 0.1;
+         }
+
+         if (keysPressed[32]) { //нажали пробел
+             if (!isShot) {
+                 shot();
+                 isShot = true;
+                 setTimeout(function() {isShot = false}, 50);
+             }
          }
 
          // поворот камеры осуществляеться в любом случае
@@ -117,25 +127,26 @@
          });
 
          // если герой врезался в стену, то откатить изменения обратно
-         if (!isHit(cameraData)[0]) {
+         var hits = isHit(cameraData);
+         if (!hits[0]) {
 
              view.setCameraPosition({
-                 x: cameraData.coords.x,
-                 y: cameraData.coords.y,
-                 z: cameraData.coords.z
+                 x: cameraData.position.x,
+                 y: cameraData.position.y,
+                 z: cameraData.position.z
              });
 
 
              model.setGazerCoords({
-                 x: cameraData.coords.x,
-                 y: cameraData.coords.y,
-                 z: cameraData.coords.z
+                 x: cameraData.position.x,
+                 y: cameraData.position.y,
+                 z: cameraData.position.z
              })
 
          }  else {
              // а если может идти, то отослать изменения во view
-              cameraData.coords.x = 0;
-
+              cameraData.position.x = 0;
+             //bulletHit(hits[1]);
               model.setGazerCoords({
                  x: vX,
                  y: vY,
@@ -147,7 +158,49 @@
      }
  })();
 
- setInterval(keyboardControls, 25);
+ setInterval(keyboardControls, 25)
+setInterval(moveBullets, 25)
+
+//создать пулю
+function shot(){
+
+    var gazer = model.gazer;
+    var bullets = model.bullets;
+
+    var newBullet = model.abstractFactory.createBullet(gazer);
+    var threeObjBullet = view.createBullet(newBullet.size, newBullet.position, newBullet.angle, newBullet.id);
+    model.bullets.push(threeObjBullet);
+
+};
+
+//передвинуть все пули
+function moveBullets(){
+    var bullets = model.bullets;
+    for (var i = 0; i < bullets.length; i++) {
+        bulletMove(bullets[i]);
+    }
+};
+
+function bulletMove(obj){
+    var bullets = model.bullets;
+    var gazer = model.gazer;
+    obj.position.z -= 0.5 * Math.cos(obj.rotation.y);
+    obj.position.x -= 0.5 * Math.sin(obj.rotation.y);
+    var hit = isHit(obj);
+    if (hit[0]) {
+        if (hit[1].name != gazer.id){
+            for (var i = 0; i < bullets.length; i++) {
+                if (bullets[i]==obj) {
+                    bullets.splice(i,1);
+                }
+            }
+            view._scene.remove(obj);
+        }
+    }
+
+        //view._scene.remove(obj);
+        //console.log(obj.position.x +' ' + obj.position.y +' ' + obj.position.z);
+}
 
 //Проверяет столкновения любого объекта с любыми другими
  function isHit(obj) {
@@ -161,20 +214,32 @@
      всего лучей 4: вперед, назад, влево и вправо
      код снимает координаты объекта и "выстреливает" лучом в нужное направление
      */
-         rays[key].ray.origin.copy(obj.coords);
+         rays[key].ray.origin.copy(obj.position);
          intersects = rays[key].intersectObjects(view._scene.children); //любое пересечение
          /*если первое пересечение хоть чему-то равно,
          то добавить дистанцию пересечения.
          если нет, добавить 10000
          */
          if (intersects[0] !== undefined) {
-             lengths.push(intersects[0].distance);
-             objs.push(intersects[0].object);
-         }
 
-         else {
-             lengths.push(10000);
-             objs.push(null);
+             while (true) {
+                 if (intersects === undefined) break;
+                if (intersects[0].object.class == 'bullet') {
+                    intersects.splice(0, 1);
+                    if (intersects.length ==0 ) break;
+
+                } else {
+                    break;
+                }
+             }
+
+             if ( intersects[0] !== undefined ) {
+                 lengths.push(intersects[0].distance);
+                 objs.push(intersects[0].object);
+             } else {
+                 lengths.push(10000);
+                 objs.push(null);
+             }
          }
      };
 
