@@ -196,7 +196,8 @@ function bulletMove(obj){
             }
             view._scene.remove(obj);
         }
-    }
+    };
+
 
         //view._scene.remove(obj);
         //console.log(obj.position.x +' ' + obj.position.y +' ' + obj.position.z);
