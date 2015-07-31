@@ -1,0 +1,13 @@
+{
+  "port": 3000,
+  "mongoose": {
+    "url": "mongodb://localhost/maze",
+    "options": {
+      "server": {
+        "socketoptions":{
+          "keepAlive": 1
+        }
+      }
+    }
+  }
+}

@@ -18,6 +18,9 @@
     "nconf": "*",
     "ejs-locals": "*",
     "async": "*",
-    "domain": "*"
+    "domain": "*",
+    "mime": "*",
+    "url": "*",
+    "serve-favicon": "*"
   }
 }
